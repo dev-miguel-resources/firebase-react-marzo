@@ -1,12 +1,18 @@
 import React from "react";
 import { Switch, Route } from "react-router-dom";
-import "./App.css";
-import { auth, createUserProfileDocument } from "./firebase/firebase.utils";
 
-import Header from "./components/header/header.component";
+import "./App.css";
+
+// Pages
 import HomePage from "./pages/homepage/homepage.component";
 import ShopPage from "./pages/shop/shop.component";
-import SignInAndSignUpPage from './pages/sign-in-and-sign-up/sign-in-and-sign-up.component';
+import SignInAndSignUpPage from "./pages/sign-in-and-sign-up/sign-in-and-sign-up.component";
+
+// Component
+import Header from "./components/header/header.component";
+
+// firebase
+import { auth, createUserProfileDocument } from "./firebase/firebase.utils";
 
 class App extends React.Component {
   constructor() {
@@ -19,20 +25,21 @@ class App extends React.Component {
 
   unsubscribeFromAuth = null;
 
-  // ciclos de vida: montado, actualizado y desmontado
-
+  // Ciclos de vida
+  // ciclo de vida: montado
   componentDidMount() {
     this.unsubscribeFromAuth = auth.onAuthStateChanged(async (userAuth) => {
       if (userAuth) {
         const userRef = await createUserProfileDocument(userAuth);
 
-        userRef.onSnapshot((snapShot) => {
+        userRef.onSnapshot((snapshot) => {
           this.setState({
             currentUser: {
-              id: snapShot.id,
-              ...snapShot.data(),
+              id: snapshot.id,
+              ...snapshot.data(),
             },
           });
+
           console.log(this.state);
         });
       }
@@ -40,6 +47,7 @@ class App extends React.Component {
     });
   }
 
+  // ciclo de vida: desmontado
   componentWillUnmount() {
     this.unsubscribeFromAuth();
   }
